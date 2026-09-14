@@ -123,7 +123,6 @@ export default function SplitScreen() {
   const BAR_W = 287;
   const total     = amounts.reduce((s, a) => s + a, 0);
   const remaining = Math.max(0, LIMIT - total);
-  const R = '100px';
   const segDefs = [
     { color: '#92d5dd', amount: amounts[0] },
     { color: '#f6c7cb', amount: amounts[1] },
@@ -135,11 +134,11 @@ export default function SplitScreen() {
   const barSegments = segDefs
     .map(s => {
       const w = (s.amount / LIMIT) * BAR_W;
-      const seg = { color: s.color, width: w, leftPx: 44 + cumPx };
+      const seg = { color: s.color, amount: s.amount, width: w, leftPx: cumPx }; // 래퍼 기준 상대 좌표
       cumPx += w;
       return seg;
     })
-    .filter(s => s.width > 0);
+    .filter(s => s.amount > 0); // 금액 기준 필터 (0원 세그먼트 제외)
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%', background: '#f7f7f7', overflow: 'hidden' }}>
@@ -239,31 +238,32 @@ export default function SplitScreen() {
             {remaining.toLocaleString('en-US')}원 남음
           </p>
 
-          {/* ── 배분 비율 바: 동적 렌더 ── */}
-          {barSegments.map((seg, i) => {
-            const isFirst = i === 0;
-            const isLast  = i === barSegments.length - 1;
-            const borderRadius = [
-              isFirst ? R : '0',
-              isLast  ? R : '0',
-              isLast  ? R : '0',
-              isFirst ? R : '0',
-            ].join(' ');
-            return (
+          {/* ── 배분 비율 바: 래퍼로 overflow:hidden 클리핑 → 양 끝 자동 radius ── */}
+          <div
+            className="absolute"
+            style={{
+              left: '44px',
+              top: sy(288),
+              width: `${BAR_W}px`,
+              height: '15px',
+              borderRadius: '100px',
+              overflow: 'hidden',
+            }}
+          >
+            {barSegments.map((seg, i) => (
               <div
                 key={i}
-                className="absolute"
                 style={{
+                  position: 'absolute',
                   left: `${seg.leftPx}px`,
-                  top: sy(288),
+                  top: 0,
                   width: `${seg.width}px`,
                   height: '15px',
                   background: seg.color,
-                  borderRadius,
                 }}
               />
-            );
-          })}
+            ))}
+          </div>
 
           {/* ── "내 계좌 4개" 라벨: Figma top=370 → sy=270 ── */}
           <p

@@ -65,23 +65,19 @@ export default function SplitConfirmScreen() {
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100px', background: '#fff', zIndex: 10 }}>
         <StatusBar />
 
-        {/* 뒤로가기: Figma left=35, top=70 */}
-        <button
-          onClick={() => navigate(-1)}
-          style={{ position: 'absolute', left: '19px', top: '44px', background: 'none', border: 'none', padding: '26px 16px 12px', cursor: 'pointer' }}
-          aria-label="뒤로가기"
-        >
-          <img src="/figma/split-back-arrow.svg" alt="" style={{ width: '9px', height: '18px', display: 'block' }} />
-        </button>
-
-        {/* 헤더 타이틀: Figma top=66 */}
-        <P style={{
-          position: 'absolute', top: '66px', left: 0, width: '100%',
-          textAlign: 'center', fontWeight: 600, fontSize: '16px', color: '#000',
-          letterSpacing: '-0.1px', whiteSpace: 'nowrap',
-        }}>
-          내 계좌에 나눠넣기
-        </P>
+        {/* 네비 행: SplitScreen과 동일한 구조 — 56px flex row, 버튼 absolute */}
+        <div style={{ position: 'absolute', top: '44px', left: 0, right: 0, height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <button
+            onClick={() => navigate(-1)}
+            style={{ position: 'absolute', left: '19px', background: 'none', border: 'none', cursor: 'pointer', padding: '12px 16px' }}
+            aria-label="뒤로가기"
+          >
+            <img src="/figma/split-back-arrow.svg" alt="" style={{ width: '9px', height: '18px', display: 'block' }} />
+          </button>
+          <P style={{ fontWeight: 600, fontSize: '16px', color: '#000', letterSpacing: '-0.1px', whiteSpace: 'nowrap' }}>
+            내 계좌에 나눠넣기
+          </P>
+        </div>
       </div>
 
       {/* ── 스크롤 콘텐츠 영역 ── */}
