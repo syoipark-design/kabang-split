@@ -1,3 +1,4 @@
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StatusBar from '../components/StatusBar';
 import AccountSplitCard from '../components/AccountSplitCard';
@@ -76,8 +77,45 @@ const CARDS = [
 // 카드별 프레임 top 좌표 (피그마 기준)
 const CARD_TOPS = [408, 713, 1035, 1339];
 
+// 총 한도
+const LIMIT = 2_800_000;
+
+// "1,000,000원" → 1000000
+function parseAmount(str) {
+  return parseInt(str.replace(/[^0-9]/g, ''), 10) || 0;
+}
+
 export default function SplitScreen() {
   const navigate = useNavigate();
+
+  // 4개 계좌 금액을 배열로 관리 (초기값은 CARDS의 amount 문자열에서 파싱)
+  const [amounts, setAmounts] = useState(() => CARDS.map(c => parseAmount(c.amount)));
+  // 초과 시 에러/흔들림 표시할 카드 인덱스 (null = 없음)
+  const [errorIdx, setErrorIdx]   = useState(null);
+  const [shakingIdx, setShakingIdx] = useState(null);
+  const shakeTimer = useRef(null);
+  const errorTimer = useRef(null);
+
+  function handleAmountChange(idx, newAmount) {
+    const next = amounts.map((a, i) => i === idx ? newAmount : a);
+    const total = next.reduce((s, a) => s + a, 0);
+
+    if (total > LIMIT) {
+      // 한도 초과 — 값 반영 안 하고 튕김 인터랙션 실행
+      clearTimeout(shakeTimer.current);
+      clearTimeout(errorTimer.current);
+      setErrorIdx(idx);
+      // null→idx 순서로 바꿔야 같은 카드를 연속 초과해도 애니메이션 재시작됨
+      setShakingIdx(null);
+      requestAnimationFrame(() => {
+        setShakingIdx(idx);
+        shakeTimer.current = setTimeout(() => setShakingIdx(null), 400);
+        errorTimer.current = setTimeout(() => setErrorIdx(null),   500);
+      });
+    } else {
+      setAmounts(next);
+    }
+  }
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%', background: '#f7f7f7', overflow: 'hidden' }}>
@@ -199,7 +237,13 @@ export default function SplitScreen() {
               className="absolute"
               style={{ left: '15px', top: sy(CARD_TOPS[i]) }}
             >
-              <AccountSplitCard {...card} />
+              <AccountSplitCard
+                {...card}
+                amount={amounts[i]}
+                onAmountChange={(v) => handleAmountChange(i, v)}
+                isError={errorIdx === i}
+                isShaking={shakingIdx === i}
+              />
             </div>
           ))}
 
