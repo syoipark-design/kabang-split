@@ -311,7 +311,7 @@ export default function SplitScreen() {
 
           {/* ── 다음 버튼: Figma top=1754 → sy=1654 ── */}
           <button
-            onClick={() => navigate('/split-confirm')}
+            onClick={() => navigate('/split-confirm', { state: { amounts } })}
             style={{
               position: 'absolute',
               left: '8px',
