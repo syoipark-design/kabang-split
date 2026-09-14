@@ -24,54 +24,31 @@ export default function AccountSplitCard({
         position: 'relative',
       }}
     >
-      {/* 은행 아이콘 */}
-      <div style={{ position: 'absolute', left: '18px', top: '20px', width: '37px', height: '37px', borderRadius: '50%', overflow: 'hidden' }}>
-        {typeof icon === 'string' ? (
-          <img src={icon} alt="" style={{ width: '100%', height: '100%' }} />
-        ) : (
-          icon
-        )}
-        {/* Toss처럼 아이콘 위에 벡터 겹치는 경우 */}
-        {iconExtra && (
-          <div style={{ position: 'absolute', left: '9px', top: '9px', width: '19px', height: '19px' }}>
-            <img src={iconExtra} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-          </div>
-        )}
+      {/* 아이콘 + 텍스트 flex 행 (수직 중앙 정렬) */}
+      <div style={{ position: 'absolute', left: '18px', top: '20px', width: '262px', height: '37px', display: 'flex', alignItems: 'center', gap: '11px' }}>
+        {/* 은행 아이콘 */}
+        <div style={{ width: '37px', height: '37px', flexShrink: 0, borderRadius: '50%', overflow: 'hidden', position: 'relative' }}>
+          {typeof icon === 'string' ? (
+            <img src={icon} alt="" style={{ width: '100%', height: '100%' }} />
+          ) : (
+            icon
+          )}
+          {iconExtra && (
+            <div style={{ position: 'absolute', left: '9px', top: '9px', width: '19px', height: '19px' }}>
+              <img src={iconExtra} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            </div>
+          )}
+        </div>
+        {/* 계좌명 + 계좌번호 */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          <p style={{ fontFamily: 'Pretendard, sans-serif', fontWeight: 500, fontSize: '15px', color: '#222', whiteSpace: 'nowrap', lineHeight: 1, margin: 0 }}>
+            {accountName}
+          </p>
+          <p style={{ fontFamily: 'Pretendard, sans-serif', fontWeight: 400, fontSize: '11px', color: '#9a9a9a', whiteSpace: 'nowrap', lineHeight: 1, margin: 0 }}>
+            {accountInfo}
+          </p>
+        </div>
       </div>
-
-      {/* 계좌명 */}
-      <p
-        style={{
-          position: 'absolute',
-          left: '66px',
-          top: '21px',
-          fontFamily: 'Pretendard, sans-serif',
-          fontWeight: 500,
-          fontSize: '15px',
-          color: '#222',
-          whiteSpace: 'nowrap',
-          lineHeight: 1,
-        }}
-      >
-        {accountName}
-      </p>
-
-      {/* 은행/계좌번호 */}
-      <p
-        style={{
-          position: 'absolute',
-          left: '66px',
-          top: '42px',
-          fontFamily: 'Pretendard, sans-serif',
-          fontWeight: 400,
-          fontSize: '11px',
-          color: '#9a9a9a',
-          whiteSpace: 'nowrap',
-          lineHeight: 1,
-        }}
-      >
-        {accountInfo}
-      </p>
 
       {/* 배지 (저축/생활/기타) */}
       {badge && (

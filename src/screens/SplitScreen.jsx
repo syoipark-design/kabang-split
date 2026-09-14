@@ -89,43 +89,19 @@ export default function SplitScreen() {
       >
         <StatusBar />
 
-        {/* 뒤로가기 화살표: Figma top=61 */}
-        <button
-          onClick={() => navigate(-1)}
-          style={{
-            position: 'absolute',
-            left: '35px',
-            top: '61px',
-            width: '9px',
-            height: '18px',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 0,
-          }}
-          aria-label="뒤로가기"
-        >
-          <img src="/figma/split-back-arrow.svg" alt="" style={{ width: '100%', height: '100%' }} />
-        </button>
-
-        {/* 타이틀: Figma top=66 */}
-        <p
-          style={{
-            position: 'absolute',
-            top: '66px',
-            left: 0,
-            width: '100%',
-            textAlign: 'center',
-            fontFamily: 'Pretendard, sans-serif',
-            fontWeight: 600,
-            fontSize: '16px',
-            color: '#000',
-            letterSpacing: '-0.1px',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          내 계좌에 나눠넣기
-        </p>
+        {/* 네비 행: StatusBar(44px) 아래부터 끝까지 flex 수직 중앙 정렬 */}
+        <div style={{ position: 'absolute', top: '44px', left: 0, right: 0, height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <button
+            onClick={() => navigate(-1)}
+            style={{ position: 'absolute', left: '19px', background: 'none', border: 'none', cursor: 'pointer', padding: '12px 16px' }}
+            aria-label="뒤로가기"
+          >
+            <img src="/figma/split-back-arrow.svg" alt="" style={{ width: '9px', height: '18px', display: 'block' }} />
+          </button>
+          <p style={{ fontFamily: 'Pretendard, sans-serif', fontWeight: 600, fontSize: '16px', color: '#000', letterSpacing: '-0.1px', whiteSpace: 'nowrap', margin: 0 }}>
+            내 계좌에 나눠넣기
+          </p>
+        </div>
       </div>
 
       {/* ── 스크롤 영역 (top=100px, 나머지 전체) ── */}
@@ -248,6 +224,7 @@ export default function SplitScreen() {
 
           {/* ── 다음 버튼: Figma top=1754 → sy=1654 ── */}
           <button
+            onClick={() => navigate('/split-confirm')}
             style={{
               position: 'absolute',
               left: '8px',
