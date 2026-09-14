@@ -97,25 +97,49 @@ export default function SplitScreen() {
   const errorTimer = useRef(null);
 
   function handleAmountChange(idx, newAmount) {
-    const next = amounts.map((a, i) => i === idx ? newAmount : a);
-    const total = next.reduce((s, a) => s + a, 0);
+    // 이 계좌가 가질 수 있는 최대값 = LIMIT − 나머지 계좌 합
+    const otherTotal = amounts.reduce((s, a, i) => i === idx ? s : s + a, 0);
+    const maxAllowed = LIMIT - otherTotal;
+    const clamped = Math.min(Math.max(0, newAmount), maxAllowed);
 
-    if (total > LIMIT) {
-      // 한도 초과 — 값 반영 안 하고 튕김 인터랙션 실행
+    // 항상 clamp된 값으로 업데이트 (직접형 — clamped와 동일한 amounts 기준 보장)
+    setAmounts(amounts.map((a, i) => i === idx ? clamped : a));
+
+    // 실제로 잘라낸 경우에만 흔들림 (clamped < newAmount)
+    if (clamped < newAmount) {
       clearTimeout(shakeTimer.current);
       clearTimeout(errorTimer.current);
       setErrorIdx(idx);
-      // null→idx 순서로 바꿔야 같은 카드를 연속 초과해도 애니메이션 재시작됨
       setShakingIdx(null);
       requestAnimationFrame(() => {
         setShakingIdx(idx);
         shakeTimer.current = setTimeout(() => setShakingIdx(null), 400);
         errorTimer.current = setTimeout(() => setErrorIdx(null),   500);
       });
-    } else {
-      setAmounts(next);
     }
   }
+
+  // 비율 바 계산 (render마다 파생)
+  const BAR_W = 287;
+  const total     = amounts.reduce((s, a) => s + a, 0);
+  const remaining = Math.max(0, LIMIT - total);
+  const R = '100px';
+  const segDefs = [
+    { color: '#92d5dd', amount: amounts[0] },
+    { color: '#f6c7cb', amount: amounts[1] },
+    { color: '#69c27d', amount: amounts[2] },
+    { color: '#efd610', amount: amounts[3] },
+    { color: '#e0e0e0', amount: remaining },
+  ];
+  let cumPx = 0;
+  const barSegments = segDefs
+    .map(s => {
+      const w = (s.amount / LIMIT) * BAR_W;
+      const seg = { color: s.color, width: w, leftPx: 44 + cumPx };
+      cumPx += w;
+      return seg;
+    })
+    .filter(s => s.width > 0);
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%', background: '#f7f7f7', overflow: 'hidden' }}>
@@ -212,15 +236,34 @@ export default function SplitScreen() {
             className="absolute"
             style={{ right: '50px', top: sy(261), fontFamily: 'Pretendard, sans-serif', fontWeight: 500, fontSize: '11px', color: 'rgba(79,79,79,0.73)', whiteSpace: 'nowrap' }}
           >
-            590,000원 남음
+            {remaining.toLocaleString('en-US')}원 남음
           </p>
 
-          {/* ── 배분 비율 바: Figma top=288 → sy=188 ── */}
-          <div className="absolute rounded-[100px]" style={{ left: '44px', top: sy(288), width: '287px', height: '15px', background: '#e0e0e0' }} />
-          <div className="absolute" style={{ left: '44px', top: sy(288), width: '103px', height: '15px', background: '#92d5dd', borderRadius: '100px 0 0 100px' }} />
-          <div className="absolute" style={{ left: '147px', top: sy(288), width: '123px', height: '15px', background: '#f6c7cb' }} />
-          <div className="absolute" style={{ left: '270px', top: sy(288), width: '20px', height: '15px', background: '#4bba64', opacity: 0.8 }} />
-          <div className="absolute" style={{ left: '290px', top: sy(288), width: '1px', height: '15px', background: '#efd610' }} />
+          {/* ── 배분 비율 바: 동적 렌더 ── */}
+          {barSegments.map((seg, i) => {
+            const isFirst = i === 0;
+            const isLast  = i === barSegments.length - 1;
+            const borderRadius = [
+              isFirst ? R : '0',
+              isLast  ? R : '0',
+              isLast  ? R : '0',
+              isFirst ? R : '0',
+            ].join(' ');
+            return (
+              <div
+                key={i}
+                className="absolute"
+                style={{
+                  left: `${seg.leftPx}px`,
+                  top: sy(288),
+                  width: `${seg.width}px`,
+                  height: '15px',
+                  background: seg.color,
+                  borderRadius,
+                }}
+              />
+            );
+          })}
 
           {/* ── "내 계좌 4개" 라벨: Figma top=370 → sy=270 ── */}
           <p

@@ -68,7 +68,7 @@ export default function SplitConfirmScreen() {
         {/* 뒤로가기: Figma left=35, top=70 */}
         <button
           onClick={() => navigate(-1)}
-          style={{ position: 'absolute', left: '19px', top: '58px', background: 'none', border: 'none', padding: '12px 16px', cursor: 'pointer' }}
+          style={{ position: 'absolute', left: '19px', top: '44px', background: 'none', border: 'none', padding: '26px 16px 12px', cursor: 'pointer' }}
           aria-label="뒤로가기"
         >
           <img src="/figma/split-back-arrow.svg" alt="" style={{ width: '9px', height: '18px', display: 'block' }} />

@@ -1,3 +1,5 @@
+import { useRef, useLayoutEffect } from 'react';
+
 // AccountSplitCard — amount은 부모(SplitScreen)에서 관리.
 // 이 컴포넌트는 표시 + 이벤트 콜백만 담당.
 // aiHintHeight: AI 힌트 박스 높이 (px). 카드 전체 높이 = 204 + aiHintHeight + 18
@@ -29,7 +31,17 @@ export default function AccountSplitCard({
   aiHintHeight,
   aiHint,
 }) {
+  const inputRef = useRef(null);
   const cardHeight = 204 + aiHintHeight + 18;
+  const formatted = amount === 0 ? '0' : amount.toLocaleString('en-US');
+
+  // 뱅킹 스타일: 값이 바뀔 때마다 커서를 오른쪽 끝에 유지
+  useLayoutEffect(() => {
+    if (inputRef.current && document.activeElement === inputRef.current) {
+      const len = formatted.length;
+      inputRef.current.setSelectionRange(len, len);
+    }
+  });
 
   return (
     <div
@@ -95,34 +107,90 @@ export default function AccountSplitCard({
           borderRadius: '7px',
         }}
       >
-        {/* 금액 input — 초과 시 텍스트만 빨강 + shake */}
-        <input
-          inputMode="numeric"
-          value={amount === 0 ? '0원' : `${amount.toLocaleString('en-US')}원`}
-          onChange={e => {
-            const digits = e.target.value.replace(/[^0-9]/g, '');
-            onAmountChange(digits === '' ? 0 : parseInt(digits, 10));
-          }}
-          onFocus={e => e.target.select()}
+        {/* 숫자 + "원" suffix — size 속성으로 너비 맞춤, focus 중엔 raw digits */}
+        <div
           style={{
             position: 'absolute',
             left: '19px',
             top: '16px',
-            fontFamily: 'Pretendard, sans-serif',
-            fontWeight: 600,
-            fontSize: '17px',
-            color: isError ? '#FF3B30' : '#000',
-            whiteSpace: 'nowrap',
-            lineHeight: 1,
-            background: 'transparent',
-            border: 'none',
-            outline: 'none',
-            padding: 0,
-            margin: 0,
-            width: '240px',
+            display: 'flex',
+            alignItems: 'center',
             animation: isShaking ? 'shake 0.35s ease' : 'none',
           }}
-        />
+        >
+          <input
+            ref={inputRef}
+            inputMode="numeric"
+            value={formatted}
+            size={Math.max(1, formatted.length)}
+            onKeyDown={e => {
+              // 데스크탑: 뱅킹 스타일 직접 처리
+              if (e.key === 'Backspace') {
+                e.preventDefault();
+                onAmountChange(Math.floor(amount / 10));
+              } else if (/^[0-9]$/.test(e.key)) {
+                e.preventDefault();
+                onAmountChange(amount * 10 + parseInt(e.key, 10));
+              }
+            }}
+            onChange={e => {
+              // 모바일 폴백 (가상 키보드는 keydown.key='Unidentified')
+              const newD = e.target.value.replace(/[^0-9]/g, '');
+              const oldD = amount === 0 ? '' : String(amount);
+              if (newD === oldD) return;
+              if (newD.length === oldD.length + 1) {
+                // 숫자 1개 추가 → 어디서 눌렀든 끝에 쌓음
+                let d = -1;
+                for (let i = 0; i < newD.length; i++) {
+                  if (i >= oldD.length || newD[i] !== oldD[i]) { d = parseInt(newD[i], 10); break; }
+                }
+                if (d >= 0) onAmountChange(amount * 10 + d);
+              } else if (newD.length === oldD.length - 1) {
+                // 숫자 1개 감소: pop vs select-all+type 구분
+                const popResult = Math.floor(amount / 10);
+                const parsed    = newD === '' ? 0 : parseInt(newD, 10);
+                onAmountChange(parsed === popResult ? popResult : parsed);
+              } else {
+                // 그 외 (붙여넣기, 전체선택+타이핑)
+                const num = newD === '' ? 0 : parseInt(newD, 10);
+                onAmountChange(isNaN(num) ? 0 : num);
+              }
+            }}
+            onFocus={() => {
+              setTimeout(() => {
+                if (inputRef.current) {
+                  const len = inputRef.current.value.length;
+                  inputRef.current.setSelectionRange(len, len);
+                }
+              }, 0);
+            }}
+            style={{
+              fontFamily: 'Pretendard, sans-serif',
+              fontWeight: 600,
+              fontSize: '17px',
+              color: isError ? '#FF3B30' : '#000',
+              lineHeight: 1,
+              background: 'transparent',
+              border: 'none',
+              outline: 'none',
+              padding: 0,
+              margin: 0,
+            }}
+          />
+          <span
+            style={{
+              fontFamily: 'Pretendard, sans-serif',
+              fontWeight: 600,
+              fontSize: '17px',
+              color: isError ? '#FF3B30' : '#000',
+              lineHeight: 1,
+              userSelect: 'none',
+              pointerEvents: 'none',
+            }}
+          >
+            원
+          </span>
+        </div>
 
         {/* 서브 레이블 — formatKoreanAmount 자동 변환 */}
         <p
