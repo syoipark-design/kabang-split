@@ -25,7 +25,7 @@ export default function AccountSplitCard({
       }}
     >
       {/* 은행 아이콘 */}
-      <div style={{ position: 'absolute', left: '18px', top: '20px', width: '37px', height: '37px' }}>
+      <div style={{ position: 'absolute', left: '18px', top: '20px', width: '37px', height: '37px', borderRadius: '50%', overflow: 'hidden' }}>
         {typeof icon === 'string' ? (
           <img src={icon} alt="" style={{ width: '100%', height: '100%' }} />
         ) : (

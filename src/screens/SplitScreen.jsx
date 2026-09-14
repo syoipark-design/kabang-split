@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import StatusBar from '../components/StatusBar';
 import AccountSplitCard from '../components/AccountSplitCard';
 import alKakao from '../assets/al-kakao.svg';
+import kbIcon from '../assets/kb.svg';
 import alTossBg from '../assets/al-toss-bg.svg';
 import alTossVector from '../assets/al-toss-vector.png';
 
@@ -22,50 +23,52 @@ const CARDS = [
     amountSub: '100만원',
     aiHintHeight: 63,
     aiHint: [
-      { text: '채윤님 또래는 월급의 약 30~40%를 저축해요. ' },
-      { text: '84~112만원', bold: true },
+      { text: '채윤님 또래는 월급의 약 30~40%를 저축하고 있어요. ' },
+      { text: '84~112만 원', bold: true },
       { text: ' 정도를 추천해요.' },
     ],
   },
   {
     icon: alKakao,
     accountName: '뱅크월렛 카카오통장',
-    accountInfo: '카카오뱅크 7979-01-123456',
+    accountInfo: '하나 78912345678901',
     badge: { label: '생활', color: '#f6c7cb' },
     amount: '1,200,000원',
     amountSub: '120만원',
     aiHintHeight: 80,
     aiHint: [
-      { text: '생활비 통장은 월 지출액 기준으로 넣어두세요. ' },
-      { text: '최근 3개월 평균 생활비', bold: true },
-      { text: '는 118만원이에요.' },
+      { text: '최근 3개월의 고정지출(통신비·교통비·구독료 등)과 소비 패턴을 살펴보니, 생활비는 ' },
+      { text: '120만 원', bold: true },
+      { text: ' 정도면 여유로워요.' },
     ],
   },
   {
     icon: alTossBg,
     iconExtra: alTossVector,
     accountName: '토스뱅크 통장',
-    accountInfo: '토스뱅크 1000-1234-5678',
-    badge: { label: '기타', color: '#c5e8cc' },
+    accountInfo: '토스뱅크 100123456789',
+    badge: { label: '기타', color: '#69c27d' },
     amount: '200,000원',
     amountSub: '20만원',
     aiHintHeight: 62,
     aiHint: [
-      { text: '기타 지출이 많아요. 패턴 분석으로 ' },
-      { text: '20만원', bold: true },
-      { text: '을 추천해요.' },
+      { text: '비상금은 한 번에 마련하기보다 조금씩 모아두는 게 좋아요. 이번 달은 ' },
+      { text: '20만 원', bold: true },
+      { text: '부터 시작해볼까요?' },
     ],
   },
   {
     icon: '/figma/split-wine-icon.svg',
     accountName: '월간와인회',
-    accountInfo: '신한카드 0119-1234-5678',
+    accountInfo: '카카오뱅크 3333-36-1234567',
     badge: null,
     amount: '50,000원',
     amountSub: '5만원',
     aiHintHeight: 44,
     aiHint: [
-      { text: '정기 구독은 미리 분배해두면 좋아요.' },
+      { text: '매달 ' },
+      { text: '5만 원', bold: true },
+      { text: '씩 넣고 있는 모임통장이에요.' },
     ],
   },
 ];
@@ -131,7 +134,7 @@ export default function SplitScreen() {
         style={{ top: '100px', bottom: 0, overflowY: 'auto', scrollbarWidth: 'none' }}
       >
         {/* 캔버스: 피그마 y 좌표에서 SCROLL_OFFSET=100 뺀 값 사용 */}
-        <div className="relative w-full" style={{ minHeight: '1700px' }}>
+        <div className="relative w-full" style={{ minHeight: '1755px' }}>
 
           {/* ── KB통장 카드 배경: Figma top=118 → sy=18 ── */}
           <div
@@ -141,7 +144,7 @@ export default function SplitScreen() {
 
           {/* KB 아이콘: Figma top=142 → sy=42 */}
           <div className="absolute" style={{ left: '35px', top: sy(142), width: '34.51px', height: '34.51px' }}>
-            <img src="/figma/split-kb-icon.svg" alt="KB" style={{ width: '100%', height: '100%' }} />
+            <img src={kbIcon} alt="KB" style={{ width: '100%', height: '100%' }} />
           </div>
 
           {/* KB국민ONE통장: Figma top=151 → sy=51 */}
@@ -223,6 +226,56 @@ export default function SplitScreen() {
               <AccountSplitCard {...card} />
             </div>
           ))}
+
+          {/* ── + 계좌 추가 버튼: Figma top=1625 → sy=1525 ── */}
+          <button
+            className="absolute bg-white"
+            style={{
+              left: '15px',
+              top: sy(1625),
+              width: '345px',
+              height: '56px',
+              borderRadius: '10px',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <img src="/figma/split-plus-icon.svg" alt="계좌 추가" style={{ width: '19px', height: '19px' }} />
+          </button>
+
+          {/* ── 다음 버튼: Figma top=1754 → sy=1654 ── */}
+          <button
+            style={{
+              position: 'absolute',
+              left: '8px',
+              top: sy(1754),
+              width: '359px',
+              height: '62px',
+              background: '#FFE200',
+              borderRadius: '14px',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <span
+              style={{
+                fontFamily: 'Pretendard, sans-serif',
+                fontWeight: 500,
+                fontSize: '17px',
+                color: '#222',
+                letterSpacing: '-0.5px',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              다음
+            </span>
+          </button>
 
         </div>
       </div>
