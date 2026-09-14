@@ -1,8 +1,10 @@
+import { useNavigate } from 'react-router-dom';
 import nudgeXIcon from '../assets/nudge-x-icon.svg';
 import nudgeRainbowMask from '../assets/nudge-rainbow-mask.svg';
 import nudgeRainbowBg from '../assets/nudge-rainbow-bg.svg';
 
 export default function AiNudgeCard({ onClose, visible }) {
+  const navigate = useNavigate();
   return (
     <div
       className="relative w-[345px] h-[204px] rounded-[24px] bg-white overflow-hidden"
@@ -94,6 +96,7 @@ export default function AiNudgeCard({ onClose, visible }) {
 
       {/* 노란 버튼 — w309, h44, radius 12px, #FFE200, 버튼 끝~카드 하단 18px */}
       <button
+        onClick={() => navigate('/split')}
         style={{
           position: 'absolute',
           left: '18px',
