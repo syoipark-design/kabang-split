@@ -111,6 +111,7 @@ export default function SplitResultScreen() {
 
       {/* 이대로 저장하기 CTA */}
       <button
+        onClick={() => navigate('/split-save-confirm', { state: { amounts } })}
         style={{
           position: 'absolute', left: '16px', top: '630px',
           width: '342.557px', height: '55.344px',

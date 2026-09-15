@@ -3,6 +3,8 @@ import HomeScreen from './screens/HomeScreen';
 import SplitScreen from './screens/SplitScreen';
 import SplitConfirmScreen from './screens/SplitConfirmScreen';
 import SplitResultScreen from './screens/SplitResultScreen';
+import SaveConfirmScreen from './screens/SaveConfirmScreen';
+import SavedScreen from './screens/SavedScreen';
 import './App.css';
 
 export default function App() {
@@ -16,6 +18,8 @@ export default function App() {
             <Route path="/split" element={<SplitScreen />} />
             <Route path="/split-confirm" element={<SplitConfirmScreen />} />
             <Route path="/split-result" element={<SplitResultScreen />} />
+            <Route path="/split-save-confirm" element={<SaveConfirmScreen />} />
+            <Route path="/split-saved" element={<SavedScreen />} />
           </Routes>
         </div>
       </div>
