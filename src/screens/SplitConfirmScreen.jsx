@@ -179,6 +179,7 @@ export default function SplitConfirmScreen() {
       {/* ── 고정 하단 버튼 영역: Figma top=698, h=114 ── */}
       <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '114px', background: '#fff' }}>
         <button
+          onClick={() => navigate('/split-result', { state: { amounts } })}
           style={{
             position: 'absolute',
             left: '16.22px',

@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomeScreen from './screens/HomeScreen';
 import SplitScreen from './screens/SplitScreen';
 import SplitConfirmScreen from './screens/SplitConfirmScreen';
+import SplitResultScreen from './screens/SplitResultScreen';
 import './App.css';
 
 export default function App() {
@@ -14,6 +15,7 @@ export default function App() {
             <Route path="/" element={<HomeScreen />} />
             <Route path="/split" element={<SplitScreen />} />
             <Route path="/split-confirm" element={<SplitConfirmScreen />} />
+            <Route path="/split-result" element={<SplitResultScreen />} />
           </Routes>
         </div>
       </div>
