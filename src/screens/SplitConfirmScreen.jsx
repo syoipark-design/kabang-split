@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import StatusBar from '../components/StatusBar';
 import alKakao from '../assets/al-kakao.svg';
@@ -75,6 +76,7 @@ const ACCOUNT_DEFS = [
 export default function SplitConfirmScreen() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [loading, setLoading] = useState(false);
 
   const amounts     = location.state?.amounts ?? [1_000_000, 1_200_000, 200_000, 10_000];
   const activeCount = amounts.filter(a => a > 0).length;
@@ -179,7 +181,10 @@ export default function SplitConfirmScreen() {
       {/* ── 고정 하단 버튼 영역: Figma top=698, h=114 ── */}
       <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '114px', background: '#fff' }}>
         <button
-          onClick={() => navigate('/split-result', { state: { amounts } })}
+          onClick={() => {
+            setLoading(true);
+            setTimeout(() => navigate('/split-result', { state: { amounts } }), 1200);
+          }}
           style={{
             position: 'absolute',
             left: '16.22px',
@@ -200,6 +205,24 @@ export default function SplitConfirmScreen() {
           </span>
         </button>
       </div>
+
+      {/* ── 로딩 오버레이 ── */}
+      {loading && (
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'rgba(0,0,0,0.6)',
+          zIndex: 100,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <div style={{
+            width: '40px', height: '40px',
+            border: '3px solid rgba(255,255,255,0.25)',
+            borderTopColor: '#fff',
+            borderRadius: '50%',
+            animation: 'spin 0.75s linear infinite',
+          }} />
+        </div>
+      )}
 
     </div>
   );

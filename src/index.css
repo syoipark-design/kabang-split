@@ -19,3 +19,7 @@ body {
   background: #e8e8ec;
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
 }
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

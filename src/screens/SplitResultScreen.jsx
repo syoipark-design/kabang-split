@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import StatusBar from '../components/StatusBar';
 import checkIcon from '../assets/result-check-icon.svg';
 import chevronIcon from '../assets/result-chevron.svg';
+import moneyBagIcon from '../assets/save-moneybag.png';
+import coinIcon from '../assets/save-coin.svg';
 
 const ACCOUNT_DEFS = [
   { info: '신한 110123456789' },
@@ -20,6 +22,7 @@ export default function SplitResultScreen() {
   const location = useLocation();
   const amounts = location.state?.amounts ?? [1_000_000, 1_200_000, 200_000, 10_000];
   const [open, setOpen] = useState(false);
+  const [saveModalOpen, setSaveModalOpen] = useState(false);
 
   const activeRows = ACCOUNT_DEFS.filter((_, i) => amounts[i] > 0);
   const expandedH = 57 + activeRows.length * 34 + 18;
@@ -111,7 +114,7 @@ export default function SplitResultScreen() {
 
       {/* 이대로 저장하기 CTA */}
       <button
-        onClick={() => navigate('/split-save-confirm', { state: { amounts } })}
+        onClick={() => setSaveModalOpen(true)}
         style={{
           position: 'absolute', left: '16px', top: '630px',
           width: '342.557px', height: '55.344px',
@@ -145,6 +148,112 @@ export default function SplitResultScreen() {
           닫기
         </span>
       </button>
+
+      {/* ── 저장 확인 모달 ── */}
+      {saveModalOpen && (
+        /* 딤드 배경 — 클릭 시 닫힘 */
+        <div
+          onClick={() => setSaveModalOpen(false)}
+          style={{
+            position: 'absolute', inset: 0,
+            background: 'rgba(0,0,0,0.7)',
+            zIndex: 20,
+          }}
+        >
+          {/* 바텀시트 — 클릭 전파 차단 */}
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              position: 'absolute', left: 0, bottom: 0,
+              width: '375px', height: '385px',
+              background: '#fff',
+              borderTopLeftRadius: '28.626px', borderTopRightRadius: '28.626px',
+            }}
+          >
+            {/* 핸들바 */}
+            <div style={{
+              position: 'absolute', left: '170.8px', top: '13px',
+              width: '34.351px', height: '4.771px',
+              background: '#d9d9d9', borderRadius: '95.42px',
+            }} />
+
+            {/* 돈봉투 이모지 */}
+            <div style={{
+              position: 'absolute', left: '50%', transform: 'translateX(-50%)',
+              top: '60px', width: '72px', height: '72px',
+            }}>
+              <img src={moneyBagIcon} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
+
+            {/* 코인 아이콘 */}
+            <div style={{
+              position: 'absolute', left: '200px', top: '97px',
+              width: '34.5px', height: '34.5px',
+            }}>
+              <img src={coinIcon} alt="" style={{ width: '100%', height: '100%' }} />
+            </div>
+
+            {/* "다음에도 이렇게 나눌까요?" */}
+            <P style={{
+              position: 'absolute', left: '50%', transform: 'translateX(-50%)',
+              top: '158px', fontSize: '20.356px', fontWeight: 700, color: '#000',
+              whiteSpace: 'nowrap', textAlign: 'center', letterSpacing: '-0.0814px',
+            }}>
+              다음에도 이렇게 나눌까요?
+            </P>
+
+            {/* 설명 */}
+            <P style={{
+              position: 'absolute', left: '50%', transform: 'translateX(-50%)',
+              top: '197px', fontSize: '16px', fontWeight: 400, color: '#666',
+              textAlign: 'center', lineHeight: 1.4, letterSpacing: '-0.4771px',
+              width: '300px',
+            }}>
+              지금 설정한 계좌와 금액을 저장하면,<br />
+              다음에도 같은 방식으로 나눌 수 있어요.
+            </P>
+
+            {/* 아니요 */}
+            <button
+              onClick={() => setSaveModalOpen(false)}
+              style={{
+                position: 'absolute', left: '17px', top: '287px',
+                width: '132.634px', height: '59.16px',
+                background: '#ececec', borderRadius: '13.359px',
+                border: 'none', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              <span style={{
+                fontFamily: 'Pretendard, sans-serif', fontWeight: 500,
+                fontSize: '16.221px', color: '#222', letterSpacing: '-0.4771px',
+              }}>
+                아니요
+              </span>
+            </button>
+
+            {/* 네, 저장할게요 */}
+            <button
+              onClick={() => navigate('/split-saved', { state: { amounts } })}
+              style={{
+                position: 'absolute', left: '159.18px', top: '287px',
+                width: '200.382px', height: '59.16px',
+                background: '#FFE200', borderRadius: '13.359px',
+                border: 'none', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              <span style={{
+                fontFamily: 'Pretendard, sans-serif', fontWeight: 500,
+                fontSize: '16.221px', color: '#222', letterSpacing: '-0.4771px',
+                whiteSpace: 'nowrap',
+              }}>
+                네, 저장할게요
+              </span>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
