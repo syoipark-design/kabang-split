@@ -183,7 +183,7 @@ export default function SplitConfirmScreen() {
         <button
           onClick={() => {
             setLoading(true);
-            setTimeout(() => navigate('/split-result', { state: { amounts } }), 1200);
+            setTimeout(() => navigate('/complete', { state: { amounts } }), 1200);
           }}
           style={{
             position: 'absolute',
